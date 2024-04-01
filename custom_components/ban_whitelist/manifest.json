@@ -4,9 +4,9 @@
   "codeowners": [
     "@palfrey"
   ],
-  "dependencies": [],
-  "documentation": "",
-  "issue_tracker": "",
+  "dependencies": ["http"],
+  "documentation": "https://github.com/palfrey/ban_whitelist",
+  "issue_tracker": "https://github.com/palfrey/ban_whitelist/issues",
   "version": "0.1",
   "iot_class": "calculated",
   "requirements": [],
