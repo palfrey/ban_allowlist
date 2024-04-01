@@ -1,6 +1,9 @@
 pytest
-homeassistant
+homeassistant >= 2023.8.3
+homeassistant-stubs
 voluptuous
 pytest-watcher
 pytest-homeassistant-custom-component >=0.13.53
 anyio[asyncio]
+pre-commit
+mypy

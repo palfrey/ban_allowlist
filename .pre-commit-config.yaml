@@ -1,0 +1,44 @@
+---
+repos:
+- repo: https://github.com/psf/black
+  rev: 24.3.0
+  hooks:
+  - id: black
+    args:
+    - --safe
+- repo: https://github.com/pycqa/flake8
+  rev: 7.0.0
+  hooks:
+  - id: flake8
+    additional_dependencies:
+    - flake8-docstrings==1.5.0
+    - pydocstyle==5.0.2
+    - Flake8-pyproject==1.2.3
+- repo: https://github.com/PyCQA/isort
+  rev: 5.12.0
+  hooks:
+  - id: isort
+    args: [--profile, black]
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v3.3.0
+  hooks:
+  - id: check-executables-have-shebangs
+    stages: [manual]
+  - id: check-json
+  - id: trailing-whitespace
+    exclude_types: [yaml]
+  - id: end-of-file-fixer
+  - id: check-yaml
+- repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+  rev: 0.2.3
+  hooks:
+  - id: yamlfmt
+    args: [--mapping, '2', --offset, '0', --sequence, '2']
+    exclude: pnpm-lock.yaml
+- repo: local
+  hooks:
+  - id: mypy
+    name: mypy
+    language: system
+    entry: make mypy
+    types: [python]

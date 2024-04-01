@@ -1,0 +1,9 @@
+[tool.mypy]
+pretty = true
+show_error_codes = true
+show_error_context = true
+explicit_package_bases = true
+warn_unused_ignores = true
+
+[tool.flake8]
+max_line_length = 110

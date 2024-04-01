@@ -1,15 +1,16 @@
 """The Ban Whitelist integration."""
 
 from __future__ import annotations
+
 import logging
+from ipaddress import IPv4Address, IPv6Address
 from typing import List
 
 import voluptuous as vol
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.typing import ConfigType
-from homeassistant.helpers import config_validation as cv
 from homeassistant.components.http.ban import KEY_BAN_MANAGER, IpBanManager
-from ipaddress import IPv4Address, IPv6Address
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers.typing import ConfigType
 
 from .const import DOMAIN
 
@@ -22,7 +23,8 @@ CONFIG_SCHEMA = vol.Schema(
                 vol.Required("ip_addresses"): vol.All(cv.ensure_list, [cv.string]),
             }
         )
-    })
+    }
+)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
@@ -34,16 +36,22 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         _LOGGER.info("Not setting whitelist, as no IPs set")
     else:
         _LOGGER.info("Setting whitelist with %s", whitelist)
-        
-        original_async_add_ban = ban_manager.async_add_ban
 
-        async def whitelist_async_add_ban(self, remote_addr: IPv4Address | IPv6Address) -> None:
+        original_async_add_ban = IpBanManager.async_add_ban
+
+        async def whitelist_async_add_ban(
+            self: IpBanManager, remote_addr: IPv4Address | IPv6Address
+        ) -> None:
             if remote_addr in whitelist:
-                _LOGGER.info("Not adding %s to ban list, as it's in the whitelist", remote_addr)
+                _LOGGER.info(
+                    "Not adding %s to ban list, as it's in the whitelist", remote_addr
+                )
                 return
-            
+
             await original_async_add_ban(self, remote_addr)
-        
-        ban_manager.async_add_ban = whitelist_async_add_ban
-    
+
+        ban_manager.async_add_ban = (  # type:ignore[method-assign]
+            whitelist_async_add_ban  # type:ignore[assignment]
+        )
+
     return True
