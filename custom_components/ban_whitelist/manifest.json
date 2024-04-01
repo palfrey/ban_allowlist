@@ -1,0 +1,14 @@
+{
+  "domain": "ban_whitelist",
+  "name": "Ban Whitelist",
+  "codeowners": [
+    "@palfrey"
+  ],
+  "dependencies": [],
+  "documentation": "",
+  "issue_tracker": "",
+  "version": "0.1",
+  "iot_class": "calculated",
+  "requirements": [],
+  "integration_type": "service"
+}

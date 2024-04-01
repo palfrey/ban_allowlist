@@ -1,0 +1,49 @@
+"""The Ban Whitelist integration."""
+
+from __future__ import annotations
+import logging
+from typing import List
+
+import voluptuous as vol
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.typing import ConfigType
+from homeassistant.helpers import config_validation as cv
+from homeassistant.components.http.ban import KEY_BAN_MANAGER, IpBanManager
+from ipaddress import IPv4Address, IPv6Address
+
+from .const import DOMAIN
+
+_LOGGER = logging.getLogger(__name__)
+
+CONFIG_SCHEMA = vol.Schema(
+    {
+        DOMAIN: vol.Schema(
+            {
+                vol.Required("ip_addresses"): vol.All(cv.ensure_list, [cv.string]),
+            }
+        )
+    })
+
+
+async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
+    """Set up Ban Whitelist from a config entry."""
+    ban_manager: IpBanManager = hass.http.app[KEY_BAN_MANAGER]
+    _LOGGER.info("Ban manager %s", ban_manager)
+    whitelist: List[str] = config.get(DOMAIN, {}).get("ip_addresses", [])
+    if len(whitelist) == 0:
+        _LOGGER.info("Not setting whitelist, as no IPs set")
+    else:
+        _LOGGER.info("Setting whitelist with %s", whitelist)
+        
+        original_async_add_ban = ban_manager.async_add_ban
+
+        async def whitelist_async_add_ban(self, remote_addr: IPv4Address | IPv6Address) -> None:
+            if remote_addr in whitelist:
+                _LOGGER.info("Not adding %s to ban list, as it's in the whitelist", remote_addr)
+                return
+            
+            await original_async_add_ban(self, remote_addr)
+        
+        ban_manager.async_add_ban = whitelist_async_add_ban
+    
+    return True

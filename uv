@@ -1,0 +1,24 @@
+#!/bin/bash
+set -eu -o pipefail
+
+SCRIPT_FOLDER=$(dirname $(realpath $0))
+
+VERSION=0.1.24
+DOWNLOADS=${SCRIPT_FOLDER}/.downloads
+UV=${DOWNLOADS}/uv-${VERSION}
+UV_COMPRESSED=${DOWNLOADS}/uv-${VERSION}.tar.gz
+
+if [ ! -d $DOWNLOADS ]; then
+    mkdir -p ${DOWNLOADS}
+fi
+
+if [ ! -f $UV_COMPRESSED ]; then
+    wget https://github.com/astral-sh/uv/releases/download/${VERSION}/uv-x86_64-unknown-linux-musl.tar.gz --output-document=${UV_COMPRESSED}
+fi
+
+if [ ! -f $UV ]; then
+    tar -zxvf ${UV_COMPRESSED} --one-top-level=${DOWNLOADS}
+    mv ${DOWNLOADS}/uv-x86_64-unknown-linux-musl/uv ${UV}
+fi
+
+$UV $*

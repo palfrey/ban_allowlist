@@ -1,0 +1,2 @@
+# Fix Python 3.11. See https://github.com/aio-libs/yarl/issues/706
+yarl >= 1.8.1

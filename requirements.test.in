@@ -1,0 +1,6 @@
+pytest
+homeassistant
+voluptuous
+pytest-watcher
+pytest-homeassistant-custom-component >=0.13.53
+anyio[asyncio]
