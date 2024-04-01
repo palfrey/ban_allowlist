@@ -1,5 +1,5 @@
 ---
-name: HA
+name: HACS
 
 on:
   push:
@@ -10,9 +10,12 @@ on:
   - cron: 0 0 * * *
 
 jobs:
-  ha:
-    name: Hassfest
+  hacs:
+    name: HACS
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - uses: home-assistant/actions/hassfest@master
+    - name: HACS Action
+      uses: hacs/action@main
+      with:
+        category: integration
