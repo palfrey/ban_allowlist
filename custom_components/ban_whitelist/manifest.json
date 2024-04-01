@@ -1,14 +1,14 @@
 {
   "domain": "ban_whitelist",
-  "name": "Ban Whitelist",
+  "name": "IP Ban Whitelist",
   "codeowners": [
     "@palfrey"
   ],
   "dependencies": ["http"],
   "documentation": "https://github.com/palfrey/ban_whitelist",
-  "issue_tracker": "https://github.com/palfrey/ban_whitelist/issues",
-  "version": "0.1",
+  "integration_type": "service",
   "iot_class": "calculated",
+  "issue_tracker": "https://github.com/palfrey/ban_whitelist/issues",
   "requirements": [],
-  "integration_type": "service"
+  "version": "0.1"
 }
