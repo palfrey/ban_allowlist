@@ -17,7 +17,7 @@ async def test_setup(hass: HomeAssistant, caplog: pytest.LogCaptureFixture) -> N
     assert list((await async_get_custom_components(hass)).keys()) == ["ban_whitelist"]
     await async_setup_component(hass, "http", {})
     await async_setup_component(
-        hass, DOMAIN, {DOMAIN: {"ip_addresses": ["192.168.1.1"]}}
+        hass, DOMAIN, {DOMAIN: {"ip_addresses": ["192.168.1.1"]}, "foo": "bar"}
     )
 
     for record in caplog.records:

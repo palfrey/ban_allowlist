@@ -23,7 +23,8 @@ CONFIG_SCHEMA = vol.Schema(
                 vol.Required("ip_addresses"): vol.All(cv.ensure_list, [cv.string]),
             }
         )
-    }
+    },
+    extra=vol.ALLOW_EXTRA,
 )
 
 
