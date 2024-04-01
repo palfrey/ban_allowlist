@@ -8,7 +8,7 @@ sync: requirements.test
 	./uv pip sync requirements.test
 
 watch-tests: sync
-	PYTHONPATH=. ptw . --now -vvv -s
+	PYTHONPATH=. ptw . --now -vvv
 
 pre-commit: sync
 	pre-commit run -a
