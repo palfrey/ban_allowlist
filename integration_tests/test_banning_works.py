@@ -39,7 +39,9 @@ def wait_for_http(port: int, host: str = "localhost", timeout: float = 5.0):
             if not isinstance(ex.args[0], ProtocolError):
                 print("Waiting", ex.args)
             if time.perf_counter() - start_time >= timeout:
-                logs = subprocess.check_output(["docker-compose", "logs"])
+                logs = subprocess.check_output(
+                    ["docker-compose", "logs"], encoding="utf-8"
+                )
                 print("logs")
                 print(logs)
                 raise TimeoutError(
@@ -53,6 +55,8 @@ def configure_ha(allowlist: list[str]) -> None:
     configuration_template = env.get_template("configuration.yaml.j2")
     with config_folder.joinpath("configuration.yaml").open("w") as config_out:
         config_out.write(configuration_template.render(ALLOWLIST=allowlist))
+
+    print("id", subprocess.check_output(["id"], encoding="utf-8"))
     subprocess.check_call(["docker-compose", "down"])
     if ban_ip_path.exists():
         ban_ip_path.unlink()
