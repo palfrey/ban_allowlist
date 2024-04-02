@@ -1,4 +1,4 @@
-"""Common fixtures for the Ban Whitelist tests."""
+"""Common fixtures for the Ban Allowlist tests."""
 
 import pytest
 

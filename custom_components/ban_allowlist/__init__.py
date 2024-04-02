@@ -1,4 +1,4 @@
-"""The Ban Whitelist integration."""
+"""The Ban Allowlist integration."""
 
 from __future__ import annotations
 
@@ -29,23 +29,23 @@ CONFIG_SCHEMA = vol.Schema(
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Set up Ban Whitelist from a config entry."""
+    """Set up Ban Allowlist from a config entry."""
     ban_manager: IpBanManager = hass.http.app[KEY_BAN_MANAGER]
     _LOGGER.debug("Ban manager %s", ban_manager)
-    whitelist: List[str] = config.get(DOMAIN, {}).get("ip_addresses", [])
-    if len(whitelist) == 0:
-        _LOGGER.info("Not setting whitelist, as no IPs set")
+    allowlist: List[str] = config.get(DOMAIN, {}).get("ip_addresses", [])
+    if len(allowlist) == 0:
+        _LOGGER.info("Not setting allowlist, as no IPs set")
     else:
-        _LOGGER.info("Setting whitelist with %s", whitelist)
+        _LOGGER.info("Setting allowlist with %s", allowlist)
 
         original_async_add_ban = IpBanManager.async_add_ban
 
-        async def whitelist_async_add_ban(
+        async def allowlist_async_add_ban(
             remote_addr: IPv4Address | IPv6Address,
         ) -> None:
-            if str(remote_addr) in whitelist:
+            if str(remote_addr) in allowlist:
                 _LOGGER.info(
-                    "Not adding %s to ban list, as it's in the whitelist", remote_addr
+                    "Not adding %s to ban list, as it's in the allowlist", remote_addr
                 )
                 return
             else:
@@ -54,7 +54,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
             await original_async_add_ban(ban_manager, remote_addr)
 
         ban_manager.async_add_ban = (  # type:ignore[method-assign]
-            whitelist_async_add_ban  # type:ignore[assignment]
+            allowlist_async_add_ban  # type:ignore[assignment]
         )
 
     return True

@@ -1,4 +1,4 @@
-"""Test Ban Whitelist setup."""
+"""Test Ban Allowlist setup."""
 
 import logging
 from ipaddress import IPv4Address
@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.loader import DATA_CUSTOM_COMPONENTS, async_get_custom_components
 from homeassistant.setup import async_setup_component
 
-from custom_components.ban_whitelist.const import DOMAIN
+from custom_components.ban_allowlist.const import DOMAIN
 
 
 def check_records(records: list[logging.LogRecord]) -> None:
@@ -19,16 +19,16 @@ def check_records(records: list[logging.LogRecord]) -> None:
         if record.levelno >= logging.WARNING:
             msg = record.getMessage()
             if msg.startswith(
-                "We found a custom integration ban_whitelist which has not been tested by Home Assistant"
+                "We found a custom integration ban_allowlist which has not been tested by Home Assistant"
             ):
                 continue
             raise Exception(msg)
 
 
-async def setup_ban_whitelist(hass: HomeAssistant) -> None:
-    """Configure ban_whitelist and dependencies."""
+async def setup_ban_allowlist(hass: HomeAssistant) -> None:
+    """Configure ban_allowlist and dependencies."""
     hass.data[DATA_CUSTOM_COMPONENTS] = None
-    assert list((await async_get_custom_components(hass)).keys()) == ["ban_whitelist"]
+    assert list((await async_get_custom_components(hass)).keys()) == ["ban_allowlist"]
     await async_setup_component(hass, "http", {})
     await async_setup_component(
         hass, DOMAIN, {DOMAIN: {"ip_addresses": ["192.168.1.1"]}, "foo": "bar"}
@@ -37,17 +37,17 @@ async def setup_ban_whitelist(hass: HomeAssistant) -> None:
 
 @pytest.mark.anyio
 async def test_setup(hass: HomeAssistant, caplog: pytest.LogCaptureFixture) -> None:
-    """Test setup of ban whitelist."""
-    await setup_ban_whitelist(hass)
+    """Test setup of ban allowlist."""
+    await setup_ban_allowlist(hass)
     check_records(caplog.records)
 
 
 @pytest.mark.anyio
-async def test_hit_whitelist(
+async def test_hit_allowlist(
     hass: HomeAssistant, caplog: pytest.LogCaptureFixture
 ) -> None:
-    """Test hitting the whitelist."""
-    await setup_ban_whitelist(hass)
+    """Test hitting the allowlist."""
+    await setup_ban_allowlist(hass)
     await cast(IpBanManager, hass.http.app[KEY_BAN_MANAGER]).async_add_ban(
         IPv4Address("192.168.1.1")
     )
@@ -60,14 +60,14 @@ async def test_hit_whitelist(
 
     for record in caplog.records:
         if record.levelno < logging.INFO or not record.name.startswith(
-            "custom_components.ban_whitelist"
+            "custom_components.ban_allowlist"
         ):
             continue
 
         messages.append(record.getMessage())
 
     assert messages == [
-        "Setting whitelist with ['192.168.1.1']",
-        "Not adding 192.168.1.1 to ban list, as it's in the whitelist",
+        "Setting allowlist with ['192.168.1.1']",
+        "Not adding 192.168.1.1 to ban list, as it's in the allowlist",
         "Banning IP 10.0.0.1",
     ]
