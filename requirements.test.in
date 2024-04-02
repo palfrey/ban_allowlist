@@ -9,6 +9,7 @@ jinja2
 requests
 pyyaml
 urllib3
+awesomeversion
 
 types-requests
 types-pyyaml

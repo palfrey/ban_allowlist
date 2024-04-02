@@ -3,8 +3,8 @@ version: '3'
 services:
   homeassistant:
     # https://github.com/home-assistant/core/pkgs/container/home-assistant
-    image: ghcr.io/home-assistant/home-assistant:2024.3.3
-    user: ${UID:-1000}:${GID:-1000}
+    image: ghcr.io/home-assistant/home-assistant:${HA_VERSION}
+    user: ${UID}:${GID}
     volumes:
     - ./config:/config
     restart: unless-stopped
