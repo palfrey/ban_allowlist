@@ -7,3 +7,6 @@ warn_unused_ignores = true
 
 [tool.flake8]
 max_line_length = 110
+
+[tool.pytest.ini_options]
+addopts = "--ignore=integration_tests"

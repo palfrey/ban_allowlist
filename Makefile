@@ -7,6 +7,9 @@ requirements.test: uv requirements.test.in requirements.constraints
 sync: requirements.test
 	./uv pip sync requirements.test
 
+unittest:
+	PYTHONPATH=. pytest -vvv
+
 watch-tests: sync
 	PYTHONPATH=. ptw . --now -vvv
 
