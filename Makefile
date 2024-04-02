@@ -8,24 +8,24 @@ sync: requirements.test
 	./uv pip sync requirements.test
 
 unittest:
-	PYTHONPATH=. pytest -vvv
+	PYTHONPATH=. .venv/bin/pytest -vvv
 
 watch-tests: sync
-	PYTHONPATH=. ptw . --now -vvv
+	PYTHONPATH=. .venv/bin/ptw . --now -vvv
 
 pre-commit: sync
-	pre-commit run -a
+	.venv/bin/pre-commit run -a
 
 mypy: sync
-	MYPYPATH=stubs dmypy run .
+	MYPYPATH=stubs .venv/bin/dmypy run .
 
 watch-mypy:
-	 watchmedo auto-restart --directory=./ --pattern="*.py;*.pyi" --no-restart-on-command-exit --recursive -- ${MAKE} mypy
+	.venv/bin/watchmedo auto-restart --directory=./ --pattern="*.py;*.pyi" --no-restart-on-command-exit --recursive -- ${MAKE} mypy
 
 integration-tests: sync
-	cd integration_tests && python test_banning_works.py
+	cd integration_tests && ../.venv/bin/python test_banning_works.py
 
 watch-integration-tests:
-	 watchmedo auto-restart --directory=./ --pattern="*.py;*.pyi;*.yaml.j2" --ignore-patterns "config/custom_components/ban_allowlist/*.py" --no-restart-on-command-exit --recursive -- ${MAKE} integration-tests
+	.venv/bin/watchmedo auto-restart --directory=./ --pattern="*.py;*.pyi;*.yaml.j2" --ignore-patterns "config/custom_components/ban_allowlist/*.py" --no-restart-on-command-exit --recursive -- ${MAKE} integration-tests
 
 .PHONY: sync venv watch-tests mypy watch-mypy integration-tests watch-integration-tests
