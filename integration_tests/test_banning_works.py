@@ -39,6 +39,9 @@ def wait_for_http(port: int, host: str = "localhost", timeout: float = 5.0):
             if not isinstance(ex.args[0], ProtocolError):
                 print("Waiting", ex.args)
             if time.perf_counter() - start_time >= timeout:
+                logs = subprocess.check_output(["docker-compose", "logs"])
+                print("logs")
+                print(logs)
                 raise TimeoutError(
                     "Waited too long for the port {} on host {} to start accepting "
                     "connections.".format(port, host)
