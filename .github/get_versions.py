@@ -28,4 +28,4 @@ for version in versions:
     else:
         latest_minors.append(version)
 output_versions = [latest_minor.string for latest_minor in latest_minors]
-print(f"::set-output name=versions::{json.dumps(output_versions)}")
+print(f"versions={json.dumps(output_versions)}")

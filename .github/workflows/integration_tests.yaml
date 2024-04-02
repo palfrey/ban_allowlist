@@ -23,7 +23,7 @@ jobs:
     - name: Generate versions
       id: generate-versions
       run: |
-        python .github/get_versions.py
+        python .github/get_versions.py >> $GITHUB_OUTPUT
 
   test:
     runs-on: ubuntu-latest
