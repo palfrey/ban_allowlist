@@ -49,6 +49,11 @@ def wait_for_http(port: int, host: str = "localhost", timeout: float = 5.0):
                     "Waited too long for the port {} on host {} to start accepting "
                     "connections.".format(port, host)
                 ) from ex
+        except Exception:
+            logs = subprocess.check_output(["docker-compose", "logs"], encoding="utf-8")
+            print("logs")
+            print(logs)
+            raise
 
 
 def configure_ha(allowlist: list[str]) -> None:
