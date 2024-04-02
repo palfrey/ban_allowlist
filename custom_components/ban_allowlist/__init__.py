@@ -54,7 +54,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
             await original_async_add_ban(ban_manager, remote_addr)
 
         ban_manager.async_add_ban = (  # type:ignore[method-assign]
-            allowlist_async_add_ban  # type:ignore[assignment]
+            allowlist_async_add_ban
         )
 
     return True
