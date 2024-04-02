@@ -1,5 +1,6 @@
 """Integration test for ban allowlist."""
 
+import os
 import shutil
 import subprocess
 import time
@@ -56,11 +57,13 @@ def configure_ha(allowlist: list[str]) -> None:
     with config_folder.joinpath("configuration.yaml").open("w") as config_out:
         config_out.write(configuration_template.render(ALLOWLIST=allowlist))
 
-    print("id", subprocess.check_output(["id"], encoding="utf-8"))
     subprocess.check_call(["docker-compose", "down"])
     if ban_ip_path.exists():
         ban_ip_path.unlink()
-    subprocess.check_call(["docker-compose", "up", "-d"])
+    subprocess.check_call(
+        ["docker-compose", "up", "-d"],
+        env={**os.environ, "UID": str(os.getuid()), "GID": str(os.getgid())},
+    )
     wait_for_http(8123)
 
 
