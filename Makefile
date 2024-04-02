@@ -19,4 +19,10 @@ mypy: sync
 watch-mypy:
 	 watchmedo auto-restart --directory=./ --pattern="*.py;*.pyi" --no-restart-on-command-exit --recursive -- ${MAKE} mypy
 
-.PHONY: sync venv watch-tests
+integration-tests: sync
+	cd integration_tests && python test_banning_works.py
+
+watch-integration-tests:
+	 watchmedo auto-restart --directory=./ --pattern="*.py;*.pyi;*.yaml.j2" --ignore-patterns "config/custom_components/ban_allowlist/*.py" --no-restart-on-command-exit --recursive -- ${MAKE} integration-tests
+
+.PHONY: sync venv watch-tests mypy watch-mypy integration-tests watch-integration-tests

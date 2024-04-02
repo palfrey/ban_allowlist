@@ -1,0 +1,11 @@
+ban_allowlist:
+  ip_addresses: {{ ALLOWLIST }}
+
+http:
+  ip_ban_enabled: true
+  login_attempts_threshold: 1
+
+logger:
+  default: warning
+  logs:
+    custom_components.ban_allowlist: debug

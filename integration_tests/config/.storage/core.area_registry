@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "minor_version": 6,
+  "key": "core.area_registry",
+  "data": {
+    "areas": [
+      {
+        "aliases": [],
+        "floor_id": null,
+        "icon": null,
+        "id": "living_room",
+        "labels": [],
+        "name": "Living Room",
+        "picture": null
+      },
+      {
+        "aliases": [],
+        "floor_id": null,
+        "icon": null,
+        "id": "kitchen",
+        "labels": [],
+        "name": "Kitchen",
+        "picture": null
+      },
+      {
+        "aliases": [],
+        "floor_id": null,
+        "icon": null,
+        "id": "bedroom",
+        "labels": [],
+        "name": "Bedroom",
+        "picture": null
+      }
+    ]
+  }
+}
