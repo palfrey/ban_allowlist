@@ -36,7 +36,6 @@ def wait_for_http(port: int, host: str = "localhost", timeout: float = 5.0):
             res.raise_for_status()
             break
         except requests.exceptions.ConnectionError as ex:
-            time.sleep(0.1)
             if not isinstance(ex.args[0], ProtocolError):
                 print("Waiting", ex.args)
             if time.perf_counter() - start_time >= timeout:
@@ -49,6 +48,14 @@ def wait_for_http(port: int, host: str = "localhost", timeout: float = 5.0):
                     "Waited too long for the port {} on host {} to start accepting "
                     "connections.".format(port, host)
                 ) from ex
+            time.sleep(0.1)
+        except requests.exceptions.HTTPError as he:
+            print(he)
+            time.sleep(0.1)
+            if he.response.status_code == 404:
+                continue
+            else:
+                raise
         except Exception:
             logs = subprocess.check_output(["docker-compose", "logs"], encoding="utf-8")
             print("logs")
