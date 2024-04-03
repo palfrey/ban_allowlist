@@ -72,11 +72,35 @@ def configure_ha(allowlist: list[str]) -> None:
     subprocess.check_call(["docker-compose", "down"])
     if ban_ip_path.exists():
         ban_ip_path.unlink()
+
+    for dirpath, dirnames, filenames in config_folder.walk(top_down=True):
+        if "custom_components" in dirnames:
+            dirnames.remove("custom_components")
+        keep_filenames = {
+            "configuration.yaml.j2",
+            "configuration.yaml",
+            "home-assistant.log",
+            ".gitignore",
+            "auth",
+            "auth_provider.homeassistant",
+            "core.restore_state",
+            "onboarding",
+            "person",
+        }
+        delete_files = set(filenames) - keep_filenames
+        if len(delete_files) == 0:
+            continue
+        print("deleting", delete_files)
+        for filename in delete_files:
+            delete_path = dirpath.joinpath(filename)
+            delete_path.unlink()
+
     subprocess.check_call(
         ["docker-compose", "up", "-d"],
         env={**os.environ, "UID": str(os.getuid()), "GID": str(os.getgid())},
     )
     wait_for_http(8123)
+    time.sleep(1)
 
 
 def check_res(expected_results: list[int]):
@@ -87,12 +111,18 @@ def check_res(expected_results: list[int]):
     """
     try:
         for index in range(len(expected_results)):
+            # Tried less terrible URLS (e.g. just /api/) and they don't seem to reliably work
+            # This one to a generally non-existant login flow, seems to work reliably
             res = requests.post(
                 "http://localhost:8123/auth/login_flow/b4b20b5004a6baa2a1d903de46886ed2",
                 json={"client_id": "http://localhost:8123/"},
             )
             assert res.ok is False, (res, res.text)
-            assert res.status_code == expected_results[index], (res, res.text)
+            assert res.status_code == expected_results[index], (
+                res.status_code,
+                expected_results[index],
+                res.text,
+            )
     finally:
         subprocess.check_call(["docker-compose", "down"])
 
