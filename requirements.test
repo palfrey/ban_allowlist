@@ -321,7 +321,6 @@ types-urllib3==1.26.25.14
     # via types-requests
 typing-extensions==4.10.0
     # via
-    #   bleak
     #   homeassistant
     #   mypy
     #   pydantic
