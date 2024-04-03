@@ -70,8 +70,6 @@ def configure_ha(allowlist: list[str]) -> None:
         config_out.write(configuration_template.render(ALLOWLIST=allowlist))
 
     subprocess.check_call(["docker-compose", "down"])
-    if ban_ip_path.exists():
-        ban_ip_path.unlink()
 
     for dirpath, dirnames, filenames in config_folder.walk(top_down=True):
         if "custom_components" in dirnames:
@@ -100,7 +98,9 @@ def configure_ha(allowlist: list[str]) -> None:
         env={**os.environ, "UID": str(os.getuid()), "GID": str(os.getgid())},
     )
     wait_for_http(8123)
-    time.sleep(1)
+
+    # FIXME: check for actually up, as opposed to waiting "probably long enough"
+    time.sleep(5)
 
 
 def check_res(expected_results: list[int]):
@@ -111,7 +111,8 @@ def check_res(expected_results: list[int]):
     """
     try:
         for index in range(len(expected_results)):
-            # Tried less terrible URLS (e.g. just /api/) and they don't seem to reliably work
+            # Tried less terrible URLs and they don't seem to reliably work
+            # Or like /api/ just always give 403s
             # This one to a generally non-existant login flow, seems to work reliably
             res = requests.post(
                 "http://localhost:8123/auth/login_flow/b4b20b5004a6baa2a1d903de46886ed2",

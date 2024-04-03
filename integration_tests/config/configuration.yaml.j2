@@ -1,5 +1,3 @@
-default_config:
-
 ban_allowlist:
   ip_addresses: {{ ALLOWLIST }}
 
@@ -8,6 +6,9 @@ http:
   login_attempts_threshold: 1
 
 logger:
-  default: warning
+  default: info
   logs:
     custom_components.ban_allowlist: debug
+
+api:
+frontend:
