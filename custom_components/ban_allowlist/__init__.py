@@ -30,7 +30,13 @@ CONFIG_SCHEMA = vol.Schema(
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Set up Ban Allowlist from a config entry."""
-    ban_manager: IpBanManager = hass.http.app[KEY_BAN_MANAGER]
+    try:
+        ban_manager: IpBanManager = hass.http.app[KEY_BAN_MANAGER]
+    except KeyError:
+        _LOGGER.warn(
+            "Can't find ban manager. ban_allowlist requires http.ip_ban_enabled to be True, so disabling."
+        )
+        return True
     _LOGGER.debug("Ban manager %s", ban_manager)
     allowlist: List[str] = config.get(DOMAIN, {}).get("ip_addresses", [])
     if len(allowlist) == 0:

@@ -63,11 +63,15 @@ def wait_for_http(port: int, host: str = "localhost", timeout: float = 5.0):
             raise
 
 
-def configure_ha(allowlist: list[str]) -> None:
+def configure_ha(allowlist: list[str], ip_ban_enabled: bool = True) -> None:
     """Configure home-assistant with a particular allowlist."""
     configuration_template = env.get_template("configuration.yaml.j2")
     with config_folder.joinpath("configuration.yaml").open("w") as config_out:
-        config_out.write(configuration_template.render(ALLOWLIST=allowlist))
+        config_out.write(
+            configuration_template.render(
+                ALLOWLIST=allowlist, IP_BAN_ENABLED=ip_ban_enabled
+            )
+        )
 
     subprocess.check_call(["docker-compose", "down"])
 
@@ -128,8 +132,24 @@ def check_res(expected_results: list[int]):
         subprocess.check_call(["docker-compose", "down"])
 
 
+def check_logs() -> None:
+    """Check the logs for errors."""
+    log_path = Path(__file__).parent.joinpath("config", "home-assistant.log")
+    if not log_path.exists():
+        return
+    data = log_path.open().read()
+    assert "ERROR" not in data, data
+
+
+# Disable banning entirely first, and make sure plugin works with an IP set
+configure_ha(["1.1.1.1"], ip_ban_enabled=False)
+check_res([404, 404])
+check_logs()
+
+# Enable banning
 configure_ha([])
 check_res([404, 403])  # Second is after banning
+check_logs()
 
 ban_ip_file = ban_ip_path.open()
 ban_ips: dict[str, object] = yaml.safe_load(ban_ip_file)
@@ -139,5 +159,6 @@ print(f"Banned ip is {ban_ip}")
 
 configure_ha([ban_ip])
 check_res([404, 404])
+check_logs()
 
 assert not ban_ip_path.exists()
