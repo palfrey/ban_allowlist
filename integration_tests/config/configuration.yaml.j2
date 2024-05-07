@@ -2,7 +2,7 @@ ban_allowlist:
   ip_addresses: {{ ALLOWLIST }}
 
 http:
-  ip_ban_enabled: true
+  ip_ban_enabled: {{ IP_BAN_ENABLED }}
   login_attempts_threshold: 1
 
 logger:
