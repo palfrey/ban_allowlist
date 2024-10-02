@@ -17,5 +17,5 @@ To use this, [install with HACS](https://hacs.xyz/) as [a custom repository](htt
 Then add to your `configuration.yaml` something like the following:
 ```
 ban_allowlist:
-  ip_addresses: ["my.ip.address", "another.ip.address"]
+  ip_addresses: ["my.ip.address", "another.network.address/24"]
 ```
