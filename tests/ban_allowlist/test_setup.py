@@ -31,7 +31,9 @@ async def setup_ban_allowlist(hass: HomeAssistant) -> None:
     assert list((await async_get_custom_components(hass)).keys()) == ["ban_allowlist"]
     await async_setup_component(hass, "http", {})
     await async_setup_component(
-        hass, DOMAIN, {DOMAIN: {"ip_addresses": ["192.168.1.1"]}, "foo": "bar"}
+        hass,
+        DOMAIN,
+        {DOMAIN: {"ip_addresses": ["192.168.1.1", "172.17.0.0/24"]}, "foo": "bar"},
     )
 
 
@@ -54,6 +56,12 @@ async def test_hit_allowlist(
     await cast(IpBanManager, hass.http.app[KEY_BAN_MANAGER]).async_add_ban(
         IPv4Address("10.0.0.1")
     )
+    await cast(IpBanManager, hass.http.app[KEY_BAN_MANAGER]).async_add_ban(
+        IPv4Address("172.17.0.10")
+    )
+    await cast(IpBanManager, hass.http.app[KEY_BAN_MANAGER]).async_add_ban(
+        IPv4Address("172.17.1.10")
+    )
     check_records(caplog.records)
 
     messages = []
@@ -67,7 +75,9 @@ async def test_hit_allowlist(
         messages.append(record.getMessage())
 
     assert messages == [
-        "Setting allowlist with ['192.168.1.1']",
+        "Setting allowlist with ['192.168.1.1/32', '172.17.0.0/24']",
         "Not adding 192.168.1.1 to ban list, as it's in the allowlist",
         "Banning IP 10.0.0.1",
+        "Not adding 172.17.0.10 to ban list, as it's in the allowlist",
+        "Banning IP 172.17.1.10",
     ]
