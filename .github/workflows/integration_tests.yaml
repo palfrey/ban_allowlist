@@ -11,7 +11,7 @@ on:
 
 jobs:
   generate_versions:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       versions: ${{ steps.generate-versions.outputs.versions }}
     steps:
@@ -30,7 +30,7 @@ jobs:
         python .github/get_versions.py >> $GITHUB_OUTPUT
 
   test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs: [generate_versions]
     strategy:
       matrix:
@@ -56,6 +56,6 @@ jobs:
   # No real steps, just a meta-step to wait for all test steps
   finish:
     needs: [test]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
     - uses: actions/checkout@v7
